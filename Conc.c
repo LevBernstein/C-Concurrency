@@ -53,8 +53,10 @@ int main() {
   char num[2];
   int i = 0;
   FILE * phil3;
- 
-  for (count; count <= goal; count++) { //Single process implementation:
+  int trials = 10;
+
+  //Single process implementation, our baseline:
+  for (count; count <= goal; count++) {
     if (divisible(count)) { //If the number fits our conditions:
       phil2 = fopen("output.txt", "a"); //Open the output file in append mode
       sprintf(temp, "%d", count); //Convert the number to a string
@@ -65,9 +67,10 @@ int main() {
   time1 = time(NULL) - time1; //The elapsed time is equal to the current time minus the start time.
   printf("Duration for single process: %ld\n", time1);
 
+  //Multi-process implementation:
   time1 = time(NULL); //Set a new start time.
   phil = creat("output.txt", 0755); //Truncate the file once more for a clean slate.
-  for (i = 0; i < 10; i++) { //We need 10 output files, one for each child process. They are named output0.txt through output9.txt.
+  for (i = 0; i < trials; i++) { //We need 10 output files, one for each child process. They are named output0.txt through output9.txt.
     //We need to truncate them all. This can be accomplished fairly efficiently through the use of a for loop.
     strcpy(nam, "output");
     sprintf(num, "%d", i); //Results in output0, output1, ... output9.
@@ -77,10 +80,10 @@ int main() {
   }
   int status = 0;
   pid_t waitpid;
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < trials; i++) {
     if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
-      int j = (i * goal)/10; //We need to divide the counting up into 10 processes that each check a tenth of the numbers to be checked.
-      for (j; j < ((i + 1) * goal)/10; j++) { //This searches through 1/10 of the max number we are going up to (goal).
+      int j = (i * goal)/trials; //We need to divide the counting up into 10 processes that each check a tenth of the numbers to be checked.
+      for (j; j < ((i + 1) * goal)/trials; j++) { //This searches through 1/10 of the max number we are going up to (goal).
 	if (divisible(j)) {
 	  strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
 	  sprintf(num, "%d", i);
@@ -99,7 +102,7 @@ int main() {
   }
   while(waitpid=wait(&status)>0); //Wait for all the children to exit.
   phil3 = fopen("output.txt", "w"); //Finally, open the main output once more.
-  for (i = 0; i < 10; i++) {  
+  for (i = 0; i < trials; i++) {  
     strcpy(nam, "output"); //For each mini-output:
     sprintf(num, "%d", i);
     strcat(nam, num);
