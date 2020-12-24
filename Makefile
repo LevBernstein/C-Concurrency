@@ -6,10 +6,13 @@ CC = gcc
 CLIBS = -lm -w
 
 conc: Conc.c
+	rm -f nums.txt
 	$(CC) $(CFLAGS) -o conc Conc.c -lm -w
+
+clean:
+	rm -f a.out conc nums.txt output*
 
 run_conc: conc
 	./conc
-
-clean:
-	rm -f a.out conc output*
+	cp output.txt nums.txt
+	rm -f output*
