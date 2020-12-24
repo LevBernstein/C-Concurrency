@@ -9,17 +9,17 @@
 #include<sys/wait.h>
 
 //Author: Lev Bernstein
-//Purpose: Find all prime numbers whose digits add up to 10 within a given range.
+//Purpose: Find all prime numbers whose digits add up to 13 within a given range.
 //Do this with one process and then with a varying number of individual processes. Measure the elasped time for each.
 //This should demonstrate the efficiency gained by dividing a problem up and running those divisions concurrently, and the point at which efficiency ceases to increase.
 //This program is an expansion of one I wrote for CSO Project 5.
 //TO COMPILE AND RUN: do "make run_conc"
 
-/* Checks if an integer is both prime and has digits that all add up to 10.
+/* Checks if an integer is both prime and has digits that all add up to 13.
    Parameters:
     num - the integer to check.
    Return value:
-    1 if the integer is a prime whose digits add up to 10; or
+    1 if the integer is a prime whose digits add up to 13; or
     0 otherwise.
  */
 int divisible(int num) { //MUST compile with -lm because of math.h! Just use the Makefile.
@@ -34,7 +34,7 @@ int divisible(int num) { //MUST compile with -lm because of math.h! Just use the
     i += (num % 10); //Use mod 10 to look at just the last digit
     num /= 10; //Then divide the remainder by 10. Because num is an int, this simply truncates the decimal.
   }
-  if (i != 10) { //If that sum is not 10, then num is not a number we want. Return 0.
+  if (i != 13) { //If that sum is not 13, then num is not a number we want. Return 0.
     return 0;
   }
   return 1; //If we made it here, then num is a number we want. Return 1.
@@ -50,10 +50,12 @@ int main() {
   char temp[12];
   int goal = 10000000; 
   char nam[15];
-  char num[2];
+  char num[3];
   int i = 0;
+  int j;
+  int k = 1;
   FILE * phil3;
-  int trials = 10;
+  int trials = 10; //trials is the maximum number of processes the task will be divided into.
 
   //Single process implementation, our baseline:
   for (count; count <= goal; count++) {
@@ -70,10 +72,10 @@ int main() {
   //Multi-process implementation:
   time1 = time(NULL); //Set a new start time.
   phil = creat("output.txt", 0755); //Truncate the file once more for a clean slate.
-  for (i = 0; i < trials; i++) { //We need 10 output files, one for each child process. They are named output0.txt through output9.txt.
+  for (i = 0; i < trials; i++) { //We need (trials) output files, one for each child process. They are named output0.txt through output(trials-1).txt.
     //We need to truncate them all. This can be accomplished fairly efficiently through the use of a for loop.
     strcpy(nam, "output");
-    sprintf(num, "%d", i); //Results in output0, output1, ... output9.
+    sprintf(num, "%d", i); //Results in output0, output1, ... output(trials-1).
     strcat(nam, num);
     strcat(nam, ".txt");
     phil = creat(nam, 0755); //Truncate the mini-output files
@@ -82,8 +84,9 @@ int main() {
   pid_t waitpid;
   for (i = 0; i < trials; i++) {
     if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
-      int j = (i * goal)/trials; //We need to divide the counting up into 10 processes that each check a tenth of the numbers to be checked.
-      for (j; j < ((i + 1) * goal)/trials; j++) { //This searches through 1/10 of the max number we are going up to (goal).
+      j = (i * goal)/trials; //We need to divide the counting up into (trials) processes that each check 1/(trials) of the numbers to be checked.
+      //This could be more efficient; instead of dividing everything up evenly, it weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
+      for (j; j < ((i + 1) * goal)/trials; j++) { //This searches through 1/(trials) of the max number we are going up to (goal).
 	if (divisible(j)) {
 	  strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
 	  sprintf(num, "%d", i);
@@ -115,7 +118,7 @@ int main() {
   }
   fclose(phil3); //Close the main output.
   time1 = time(NULL) - time1; //Time elapsed = current time - start time.
-  printf("Duration for multiple processes: %ld\n", time1);
+  printf("Duration for %d processes: %ld\n", trials, time1);
   
   return 0;
 }
