@@ -75,19 +75,19 @@ int main() {
   for (k; k <= trials; k++) {
     time1 = time(NULL); //Set a new start time.
     phil = creat("output.txt", 0755); //Truncate the file once more for a clean slate.
-    for (i = 0; i < trials; i++) { //We need (trials) output files, one for each child process. They are named output0.txt through output(trials-1).txt.
+    for (i = 0; i < k; i++) { //We need k output files, one for each child process. They are named output0.txt through output(k-1).txt.
       //We need to truncate them all. This can be accomplished fairly efficiently through the use of a for loop.
       strcpy(nam, "output");
-      sprintf(num, "%d", i); //Results in output0, output1, ... output(trials-1).
+      sprintf(num, "%d", i); //Results in output0, output1, ... output(k-1).
       strcat(nam, num);
       strcat(nam, ".txt");
       phil = creat(nam, 0755); //Truncate the mini-output files
     }
-    for (i = 0; i < trials; i++) {
+    for (i = 0; i < k; i++) {
       if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
-	j = (i * goal)/trials; //We need to divide the counting up into (trials) processes that each check 1/(trials) of the numbers to be checked.
+	j = (i * goal)/k; //We need to divide the counting up into (trials) processes that each check 1/(trials) of the numbers to be checked.
 	//This could be more efficient; instead of dividing everything up evenly, weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
-	for (j; j < ((i + 1) * goal)/trials; j++) { //This searches through 1/(trials) of the max number we are going up to (goal).
+	for (j; j < ((i + 1) * goal)/k; j++) { //This searches through 1/(trials) of the max number we are going up to (goal).
 	  if (divisible(j)) {
 	    strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
 	    sprintf(num, "%d", i);
@@ -106,7 +106,7 @@ int main() {
     }
     while(waitpid=wait(&status)>0); //Wait for all the children to exit.
     phil3 = fopen("output.txt", "w"); //Finally, open the main output once more.
-    for (i = 0; i < trials; i++) {  
+    for (i = 0; i < k; i++) {  
       strcpy(nam, "output"); //For each mini-output:
       sprintf(num, "%d", i);
       strcat(nam, num);
