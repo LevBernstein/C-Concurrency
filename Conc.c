@@ -44,7 +44,7 @@ int main() {
   int count = 0;
   time_t time1 = time(NULL); //Use time(NULL) to get the seconds since Jan 1st 1970
   int phil = creat("output.txt", 0775); //From The C Programming Language: "0775 specifies read, write, and execute permission for the owner, and read and execute permission for the group and everyone else."
-  //By running creat here, I truncate output.txt, just in case there's still something left in it.
+  //By running creat here, I truncate output.txt, just in case there's still something left in it. Alternatively, run "make clean"
   close(phil);
   FILE * phil2;
   char temp[12];
@@ -55,13 +55,13 @@ int main() {
   int j;
   int k = 2;
   FILE * phil3;
-  int trials = 25; //trials is the maximum number of processes the task will be divided into. Do not use more than 99 processes. That's the hard limit, as specified byt he size of num.
+  int trials = 25; //trials is the maximum number of processes the task will be divided into. Do not use more than 99 processes. That's the hard limit, as specified by the size of num.
   int status = 0;
   pid_t waitpid;
   
-  //Single process implementation, our baseline:
+  //Single process implementation, the baseline:
   for (count; count <= goal; count++) {
-    if (divisible(count)) { //If the number fits our conditions:
+    if (divisible(count)) { //If the number fits the conditions:
       phil2 = fopen("output.txt", "a"); //Open the output file in append mode
       sprintf(temp, "%d", count); //Convert the number to a string
       fprintf(phil2, "%s\n", temp); //Write it to the file along with a newline character
@@ -85,9 +85,9 @@ int main() {
     }
     for (i = 0; i < k; i++) {
       if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
-	j = (i * goal)/k; //We need to divide the counting up into (trials) processes that each check 1/(trials) of the numbers to be checked.
+	j = (i * goal)/k; //We need to divide the counting up into k processes that each check 1/k of the numbers to be checked.
 	//This could be more efficient; instead of dividing everything up evenly, weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
-	for (j; j < ((i + 1) * goal)/k; j++) { //This searches through 1/(trials) of the max number we are going up to (goal).
+	for (j; j < ((i + 1) * goal)/k; j++) { //This searches through 1/k of the max number we are going up to (goal).
 	  if (divisible(j)) {
 	    strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
 	    sprintf(num, "%d", i);
