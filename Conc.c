@@ -13,7 +13,7 @@
 //Do this with one process and then with a varying number of individual processes. Measure the elasped time for each.
 //This should demonstrate the efficiency gained by dividing a problem up and running those divisions concurrently, and the point at which efficiency ceases to increase.
 //This program is an expansion of one I wrote for CSO Project 5.
-//TO COMPILE AND RUN: do "make run_problem1"
+//TO COMPILE AND RUN: do "make run_conc"
 
 /* Checks if an integer is both prime and has digits that all add up to 10.
    Parameters:
@@ -22,7 +22,7 @@
     1 if the integer is a prime whose digits add up to 10; or
     0 otherwise.
  */
-int divisible(int num) { //MUST compile with -lm because of math.h!
+int divisible(int num) { //MUST compile with -lm because of math.h! Just use the Makefile.
   int i = 2; //Don't start at 0 for obvious reasons (let's not divide by 0); don't start at 1 because 1 divides everything.
   for (i; i <= (int) sqrt(num) + 1; i++) { //Sieve of Eratosthenes can stop checking after sqrt of max; I add 1 just in case casting to int creates any issues.
     if (num % i == 0) { //If i evenly divides num, num is not prime. While 2 is indeed prime, we can ignore it because its digits do not add up to 10.
@@ -43,7 +43,7 @@ int divisible(int num) { //MUST compile with -lm because of math.h!
 int main() {
   int count = 0;
   time_t time1 = time(NULL); //Use time(NULL) to get the seconds since Jan 1st 1970
-  int phil = creat("output.txt", 0775); //From the textbook (The C Programming Language): "0775 specifies read, write, and execute permission for the owner, and read and execute permission for the group and everyone else."
+  int phil = creat("output.txt", 0775); //From The C Programming Language: "0775 specifies read, write, and execute permission for the owner, and read and execute permission for the group and everyone else."
   //By running creat here, I truncate output.txt, just in case there's still something left in it.
   close(phil);
   FILE * phil2;
@@ -54,7 +54,7 @@ int main() {
   int i = 0;
   FILE * phil3;
  
-  for (count; count <= goal; count++) {
+  for (count; count <= goal; count++) { //Single process implementation:
     if (divisible(count)) { //If the number fits our conditions:
       phil2 = fopen("output.txt", "a"); //Open the output file in append mode
       sprintf(temp, "%d", count); //Convert the number to a string
