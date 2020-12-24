@@ -48,15 +48,17 @@ int main() {
   close(phil);
   FILE * phil2;
   char temp[12];
-  int goal = 10000000; 
+  int goal = 20000000; 
   char nam[15];
   char num[3];
   int i = 0;
   int j;
-  int k = 1;
+  int k = 2;
   FILE * phil3;
-  int trials = 10; //trials is the maximum number of processes the task will be divided into.
-
+  int trials = 15; //trials is the maximum number of processes the task will be divided into. Do not use more than 99 processes. That's the hard limit, as specified byt he size of num.
+  int status = 0;
+  pid_t waitpid;
+  
   //Single process implementation, our baseline:
   for (count; count <= goal; count++) {
     if (divisible(count)) { //If the number fits our conditions:
@@ -70,6 +72,7 @@ int main() {
   printf("Duration for single process: %ld\n", time1);
 
   //Multi-process implementation:
+  for (k; k <= trials; k++) {
   time1 = time(NULL); //Set a new start time.
   phil = creat("output.txt", 0755); //Truncate the file once more for a clean slate.
   for (i = 0; i < trials; i++) { //We need (trials) output files, one for each child process. They are named output0.txt through output(trials-1).txt.
@@ -80,12 +83,10 @@ int main() {
     strcat(nam, ".txt");
     phil = creat(nam, 0755); //Truncate the mini-output files
   }
-  int status = 0;
-  pid_t waitpid;
   for (i = 0; i < trials; i++) {
     if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
       j = (i * goal)/trials; //We need to divide the counting up into (trials) processes that each check 1/(trials) of the numbers to be checked.
-      //This could be more efficient; instead of dividing everything up evenly, it weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
+      //This could be more efficient; instead of dividing everything up evenly, weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
       for (j; j < ((i + 1) * goal)/trials; j++) { //This searches through 1/(trials) of the max number we are going up to (goal).
 	if (divisible(j)) {
 	  strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
@@ -118,7 +119,7 @@ int main() {
   }
   fclose(phil3); //Close the main output.
   time1 = time(NULL) - time1; //Time elapsed = current time - start time.
-  printf("Duration for %d processes: %ld\n", trials, time1);
-  
+  printf("Duration for %d processes: %ld\n", k, time1);
+  }
   return 0;
 }
