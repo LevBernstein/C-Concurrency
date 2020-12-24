@@ -1,0 +1,5 @@
+conc
+*.swp
+'#*
+*.out
+output*
