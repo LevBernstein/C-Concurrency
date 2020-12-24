@@ -8,6 +8,8 @@ There are some major inefficiencies here; every time the program finds a number 
 It would be far more efficient to open and close output only once. However, opening and closing every time causes the program to spend more time on I/O, allowing us to
 get a real measurement of speed.
 
+Looking at the output, there are clear diminishing returns; the time it takes to accomplish the task approximates logarithmic growth.
+
 Sample output:
 Duration for single process: 16 seconds
 
