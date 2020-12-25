@@ -10,59 +10,25 @@ There are some major inefficiencies here; every time the program finds a number 
 It would be far more efficient to open and close output only once. However, opening and closing every time causes the program to spend more time on I/O, allowing us to
 get a real measurement of speed.
 
-Looking at the output, there are clear diminishing returns; maximum efficiency for the task seems to be achieved with 9 processes (though this is only accurate to the second).
-
 ## Sample output:
 
-Duration for single process: 16 seconds
+* Duration for single process: 16 seconds
+* Duration for 2 processes: 10 seconds
+* Duration for 3 processes: 7 seconds 
+* Duration for 4 processes: 6 seconds 
+* Duration for 5 processes: 4 seconds 
+* Duration for 6 processes: 4 seconds 
+* Duration for 7 processes: 4 seconds 
+* Duration for 8 processes: 4 seconds 
+* Duration for 9 processes: 3 seconds 
+* Duration for 10 processes: 3 seconds 
+* Duration for 11 processes: 3 seconds 
+* Duration for 12 processes: 3 seconds 
+* Duration for 13 processes: 4 seconds 
+* Duration for 14 processes: 3 seconds 
 
-Duration for 2 processes: 10 seconds
-
-Duration for 3 processes: 7 seconds 
-
-Duration for 4 processes: 6 seconds 
-
-Duration for 5 processes: 4 seconds 
-
-Duration for 6 processes: 4 seconds 
-
-Duration for 7 processes: 4 seconds 
-
-Duration for 8 processes: 4 seconds 
-
-Duration for 9 processes: 3 seconds 
-
-Duration for 10 processes: 3 seconds 
-
-Duration for 11 processes: 3 seconds 
-
-Duration for 12 processes: 3 seconds 
-
-Duration for 13 processes: 4 seconds 
-
-Duration for 14 processes: 3 seconds 
-
-Duration for 15 processes: 3 seconds 
-
-Duration for 16 processes: 3 seconds 
-
-Duration for 17 processes: 3 seconds 
-
-Duration for 18 processes: 3 seconds 
-
-Duration for 19 processes: 3 seconds 
-
-Duration for 20 processes: 3 seconds 
-
-Duration for 21 processes: 3 seconds 
-
-Duration for 22 processes: 3 seconds 
-
-Duration for 23 processes: 3 seconds 
-
-Duration for 24 processes: 3 seconds 
-
-Duration for 25 processes: 3 seconds
+... (15-24 were all 3 seconds as well)
+* Duration for 25 processes: 3 seconds
 
 ## Analysis
 
@@ -71,3 +37,5 @@ As per the [keisan Online Calculator](https://keisan.casio.com/exec/system/14059
 ![Power Regression Chart](https://github.com/LevBernstein/C-Concurrency/blob/main/chart.png)
 
 |r| = 0.922, indicating strong correlation.
+
+The clear diminishing returns indicate that maximum efficiency is achieved around 9 or 10 processes, though this is limited due to accuracy being restricted to whole-second increments.
