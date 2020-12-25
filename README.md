@@ -10,7 +10,7 @@ There are some major inefficiencies here; every time the program finds a number 
 It would be far more efficient to open and close output only once. However, opening and closing every time causes the program to spend more time on I/O, allowing us to
 get a real measurement of speed.
 
-Looking at the output, there are clear diminishing returns; the time it takes to accomplish the task approximates logarithmic growth.
+Looking at the output, there are clear diminishing returns; maximum efficiency for the task seems to be achieved with 9 processes (though this is only accurate to the second).
 
 ## Sample output:
 
@@ -63,3 +63,11 @@ Duration for 23 processes: 3 seconds
 Duration for 24 processes: 3 seconds 
 
 Duration for 25 processes: 3 seconds
+
+## Analysis
+
+As per the [keisan Online Calculator](https://keisan.casio.com/exec/system/14059931777261), the time (y) it takes to accomplish the task using x processes can be modeled using the following equation: y = 11.5x^-.478. The power regression chart based on the data:
+
+![Power Regression Chart](https://github.com/LevBernstein/C-Concurrency/blob/main/chart.png)
+
+|r| = 0.922, indicating strong correlation.
