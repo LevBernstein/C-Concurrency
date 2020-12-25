@@ -9,8 +9,8 @@ In this case, the task is to find all primes whose digits add up to 13 between 1
 There are some major inefficiencies here; every time the program finds a number that meets our criteria, it opens, writes to, and closes the output file.
 It would be far more efficient to open and close output only once. However, opening and closing every time causes the program to spend more time on I/O, allowing us to
 get a real measurement of speed. Still, fopen, fgets, and their ilk are extremely efficient; they only add a small amount of time to the total the program takes.
-As a result, I increased the goal--the number to check up to--to 20000000, far beyond its original 100000. I chose as the number whose digits the primes have to add up to
-because, based on trials, there are quite a lot of primes that fit the bill. They are also relativel evenly distributed; other numbers work, but often result in the later
+As a result, I increased the goal--the number to check up to--to 20000000, far beyond its original 100000. I chose 13 as the number whose digits the primes have to add up to
+because, based on trials, there are quite a lot of primes that fit the bill. They are also relatively evenly distributed; other numbers work, but often result in the later
 processes in each division doing no actual I/O. Even with just 10 trials, for instance, processes 9 and 10 often have nothing to do when checking against other numbers.
 As a result, 13 was an easy choice.
 
