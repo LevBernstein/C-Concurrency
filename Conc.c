@@ -47,28 +47,30 @@ int main() {
   //By running creat here, I truncate output.txt, just in case there's still something left in it. Alternatively, run "make clean"
   close(phil);
   FILE * phil2;
-  char temp[12];
-  int goal = 20000000; 
+  char temp[12]; //If you want to increase goal above 999999999 (which you probably should not do; I wouldn't go beyond 30000000), increase the length of temp accordingly, by one per extra digit on goal.
+  int goal = 20000000; //The number to check up to. As this number increases, the improvements from using more processes increase as well, though they do level off at a point. On my system, for a goal of 20000000, that point is 9 or 10 processes.
   char nam[15];
-  char num[3];
-  int i = 0;
+  int i;
   int j;
   int k = 2;
   FILE * phil3;
-  int trials = 25; //trials is the maximum number of processes the task will be divided into. Do not use more than 99 processes. That's the hard limit, as specified by the size of num.
+  int trials = 25; //trials is the maximum number of processes the task will be divided into. Do not use more than 99 processes. That's the hard limit, as specified by the size of nam.
+  //If for some reason you want to use 100+ processes, increase the size of nam by 1 per digit you're adding.
   int status = 0;
   pid_t waitpid;
   
   //Single process implementation, the baseline:
+  printf("Starting the search, please wait...\n");
   for (count; count <= goal; count++) {
     if (divisible(count)) { //If the number fits the conditions:
       phil2 = fopen("output.txt", "a"); //Open the output file in append mode
       sprintf(temp, "%d", count); //Convert the number to a string
       fprintf(phil2, "%s\n", temp); //Write it to the file along with a newline character
       fclose(phil2); //Close the file. This is incredibly inefficient, but it means that we will spend some real time on I/O. To make this more efficient, we could just have the open and close outside the for loop.
+      //If you feel like increasing goal up to some ludicrously high number, then you'll want to move as much I/O as possible out of the loops, in order to cut down on that time. Otherwise you'll be waiting a while.
     }
   }
-  time1 = time(NULL) - time1; //The elapsed time is equal to the current time minus the start time.
+  time1 = time(NULL) - time1; //The elapsed time is equal to the current time minus the start time. Limited to seconds in accuracy.
   printf("Duration for single process: %ld seconds\n", time1);
 
   //Multi-process implementation:
@@ -77,22 +79,17 @@ int main() {
     phil = creat("output.txt", 0755); //Truncate the file once more for a clean slate.
     for (i = 0; i < k; i++) { //We need k output files, one for each child process. They are named output0.txt through output(k-1).txt.
       //We need to truncate them all. This can be accomplished fairly efficiently through the use of a for loop.
-      strcpy(nam, "output");
-      sprintf(num, "%d", i); //Results in output0, output1, ... output(k-1).
-      strcat(nam, num);
-      strcat(nam, ".txt");
+      sprintf(nam, "output%d.txt", i);
       phil = creat(nam, 0755); //Truncate the mini-output files
     }
+    //close(phil);
     for (i = 0; i < k; i++) {
       if ((fork()) == 0) { //If the return value of fork() is 0, then this is a child process.
 	j = (i * goal)/k; //We need to divide the counting up into k processes that each check 1/k of the numbers to be checked.
 	//This could be more efficient; instead of dividing everything up evenly, weighting the number to look through towards the back would be faster, as the later forks will have fewer hits and thus less I/O.
 	for (j; j < ((i + 1) * goal)/k; j++) { //This searches through 1/k of the max number we are going up to (goal).
 	  if (divisible(j)) {
-	    strcpy(nam, "output"); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
-	    sprintf(num, "%d", i);
-	    strcat(nam, num);
-	    strcat(nam, ".txt");
+	    sprintf(nam, "output%d.txt", i); //Same thing here as the truncation for the mini-output files, but this time it just opens them in append mode.
 	    //Then open and write to those files in the exact same way as was done for the single-process implementation:
 	    phil2 = fopen(nam, "a");
 	    sprintf(temp, "%d", j);
@@ -107,19 +104,20 @@ int main() {
     while(waitpid=wait(&status)>0); //Wait for all the children to exit.
     phil3 = fopen("output.txt", "w"); //Finally, open the main output once more.
     for (i = 0; i < k; i++) {  
-      strcpy(nam, "output"); //For each mini-output:
-      sprintf(num, "%d", i);
-      strcat(nam, num);
-      strcat(nam, ".txt");
+      sprintf(nam, "output%d.txt", i);
       phil2 = fopen(nam, "r"); //Open them in read mode
       while (fgets(temp, 12, phil2) != NULL) { //While there are still unread lines in the mini-output:
 	fputs(temp, phil3); //Write those lines to the main output.
       }
-      fclose(phil2); //Close the mini-output. Advance to the next one.
+      //fclose(phil2); //Close the mini-output. Advance to the next one.
     }
-    fclose(phil3); //Close the main output.
-    time1 = time(NULL) - time1; //Time elapsed = current time - start time.
+    //fclose(phil3); //Close the main output.
+    time1 = time(NULL) - time1; //Time elapsed = current time - start time. Limited to seconds in accuracy.
     printf("Duration for %d processes: %ld seconds \n", k, time1);
   }
+  //Close the files at the end.
+  close(phil);
+  fclose(phil2);
+  fclose(phil3);
   return 0;
 }
