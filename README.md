@@ -1,5 +1,7 @@
 # C-Concurrency
 
+Lev Bernstein
+
 C program demonstrating the benefits--and diminishing returns--of dividing a task into multiple concurrent processes using fork().
 
 In this case, the task is to find all primes whose digits add up to 13 between 1 and 10000000.
@@ -10,7 +12,8 @@ get a real measurement of speed.
 
 Looking at the output, there are clear diminishing returns; the time it takes to accomplish the task approximates logarithmic growth.
 
-Sample output:
+## Sample output:
+
 Duration for single process: 16 seconds
 
 Duration for 2 processes: 10 seconds
