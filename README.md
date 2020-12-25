@@ -31,7 +31,7 @@ As a result, 13 was an easy choice.
 * Duration for 13 processes: 4 seconds 
 * Duration for 14 processes: 3 seconds 
 
-  ... (15-24 were all 3 seconds as well)
+  ...(15-24 were all 3 seconds as well)...
 * Duration for 25 processes: 3 seconds
 
 ## Analysis
@@ -42,4 +42,4 @@ As per the [keisan Online Calculator](https://keisan.casio.com/exec/system/14059
 
 |r| = 0.922, indicating strong correlation.
 
-The clear diminishing returns indicate that maximum efficiency is achieved around 9 or 10 processes, though this is limited due to accuracy being restricted to whole-second increments.
+The clear diminishing returns indicate that maximum efficiency is achieved around 9 or 10 processes, though this is limited due to accuracy being restricted to whole-second increments. Time is measured based on the Unix epoch: seconds since January 1st 1970. I may change this in the future.
