@@ -12,7 +12,7 @@
 //Purpose: Find all prime numbers whose digits add up to 13 within a given range.
 //Do this with one process and then with a varying number of individual processes. Measure the elasped time for each.
 //This should demonstrate the efficiency gained by dividing a problem up and running those divisions concurrently, and the point at which efficiency ceases to increase.
-//This program is an expansion of one I wrote for CSO Project 5.
+//This program is an expansion of an earlier program I wrote in Computer Systems Organization.
 //TO COMPILE AND RUN: do "make run_conc"
 
 /* Checks if an integer is both prime and has digits that all add up to 13.
@@ -22,7 +22,7 @@
     1 if the integer is a prime whose digits add up to 13; or
     0 otherwise.
  */
-int divisible(int num) { //MUST compile with -lm because of math.h! Just use the Makefile.
+int divisible(int num) { //MUST compile with -lm because of math.h! Just use the Makefile to compile.
   int i = 2; //Don't start at 0 for obvious reasons (let's not divide by 0); don't start at 1 because 1 divides everything.
   for (i; i <= (int) sqrt(num) + 1; i++) { //Sieve of Eratosthenes can stop checking after sqrt of max; I add 1 just in case casting to int creates any issues.
     if (num % i == 0) { //If i evenly divides num, num is not prime. While 2 is indeed prime, we can ignore it because its digits do not add up to 10.
