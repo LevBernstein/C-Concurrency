@@ -40,6 +40,6 @@ As per the [keisan Online Calculator](https://keisan.casio.com/exec/system/14059
 
 ![Power Regression Chart](https://github.com/LevBernstein/C-Concurrency/blob/main/chart.png)
 
-|r| = 0.922, indicating strong correlation. The duration for 13 processes, 4 seconds, is a clear outlier that cna be blamed on any number of factors that could cause a general slowdown on my local machine.
+|r| = 0.922, indicating strong correlation. The duration for 13 processes, 4 seconds, is a clear outlier that can be blamed on any number of factors that could cause a general slowdown on my local machine.
 
 The clear diminishing returns indicate that maximum efficiency is achieved around 9 or 10 processes, though this is limited due to accuracy being restricted to whole-second increments. Time is measured based on the Unix epoch: seconds since January 1st 1970. I may change this in the future.
